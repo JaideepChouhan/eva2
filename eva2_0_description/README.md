@@ -19,7 +19,7 @@
 - ros2 launch urdf_tutorial display.launch.py \
   model:=/path/to/eva2_0_description/urdf/eva2_0.urdf
 ```
-- <img src="output.gif" alt="EVA 2.0 Demo" width="800"/>
+<img src="output.gif" alt="EVA 2.0 Demo" width="800"/>
 
 ## Run FK Node
 
