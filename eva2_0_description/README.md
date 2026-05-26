@@ -50,9 +50,9 @@ ros2 topic echo /eva2_0/left_arm/end_effector_pose
 | Joint | theta | d | a | alpha |
 |---|---|---|---|---|
 | shoulder_pan | q1 | 0.06 | 0 | -π/2 |
-| shoulder_lift | q2 | 0 | 0 | -π/2 |
-| elbow | q3 | 0.18 | 0 | -π/2 |
-| wrist_roll | q4 | 0.16 | 0 | π/2 |
+| shoulder_lift | q2 | 0 | 0 | 0 |
+| elbow | q3 | 0.18 | 0 | +π/2 |
+| wrist_roll | q4 | 0.16 | 0 | -π/2 |
 | wrist_pitch | q5 | 0.04 | 0 | 0 |
 
 ---
