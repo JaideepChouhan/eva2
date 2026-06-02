@@ -45,7 +45,9 @@ class FKNode(Node):
                              [-s, 0, c, 0],
                              [ 0, 0, 0, 1]], dtype=float)
 
-        return (                       Rz(q[0])
+        return (trans(0, 0, 0.3)
+              @ trans(-0.18, 0, 0.18)    
+              			   @ Rz(q[0])
               @ trans(0, 0, -0.06) @ Ry(q[1])
               @ trans(0, 0, -0.18) @ Ry(q[2])
               @ trans(0, 0, -0.16) @ Rz(q[3])

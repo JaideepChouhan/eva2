@@ -50,8 +50,9 @@ class FKNode(Node):
                              [0, s,  c, 0],
                              [0, 0,  0, 1]], dtype=float)
 
-        # order -> pan, tilt, roll, kinect offset or where ever kinect is 		 
-        return (trans(0, 0, 0.08) @ Rz(q[0]) 
+        # order -> base_to_torso, torso_to_neck, pan, tilt, roll, kinect offset or whereever kinect will 		 
+        return (trans(0, 0, 0.3) @ trans(0, 0, 0.3)
+        	@ trans(0, 0, 0.08) @ Rz(q[0]) 
                 @ trans(0, 0, 0.07) @ Ry(q[1]) 
                 @ trans(0, 0, 0) @ Rx(q[2])
                 @ trans(0, 0, 0.06)) 	
