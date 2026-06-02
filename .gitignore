@@ -1,1 +1,8 @@
 EVA_2_0_handbook.pdf
+cat > .gitignore << "EOF"
+# ROS2 build & install
+build/
+install/
+log/
+__pycache__/
+*.pyc

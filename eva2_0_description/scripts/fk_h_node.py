@@ -1,31 +1,29 @@
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import JointState
 from geometry_msgs.msg import Pose
-from scipy.spatial.transform import Rotation
+from sensor_msgs.msg import JointState
 import numpy as np
+from scipy.spatial.transform import Rotation
 
 class FKNode(Node):
     def __init__(self):
-        super().__init__('fk_r_node')
-
+        super().__init__('fk_h_node')
+        
         self.subscription = self.create_subscription(
             JointState,
             '/joint_states',
             self.joint_callback,
             10
         )
-
+        
         self.publisher = self.create_publisher(
             Pose,
-            '/eva2_0/right_arm/end_effector_pose',
+            '/eva2_0/head/kinect_node',
             10
         )
-
         self.get_logger().info('FK node started')
-
+        
     def compute_fk(self, q):
-
         def trans(x, y, z):
             M = np.eye(4)
             M[0,3], M[1,3], M[2,3] = x, y, z
@@ -45,27 +43,32 @@ class FKNode(Node):
                              [-s, 0, c, 0],
                              [ 0, 0, 0, 1]], dtype=float)
 
-        return (                       Rz(q[0])
-              @ trans(0, 0, -0.06) @ Ry(q[1])
-              @ trans(0, 0, -0.18) @ Ry(q[2])
-              @ trans(0, 0, -0.16) @ Rz(q[3])
-              @ trans(0, 0, -0.04) @ Ry(q[4]))
+        def Rx(a):
+            c, s = np.cos(a), np.sin(a)
+            return np.array([[1, 0,  0, 0],
+                             [0, c, -s, 0],
+                             [0, s,  c, 0],
+                             [0, 0,  0, 1]], dtype=float)
 
+        # order -> pan, tilt, roll, kinect offset or where ever kinect is 		 
+        return (trans(0, 0, 0.08) @ Rz(q[0]) 
+                @ trans(0, 0, 0.07) @ Ry(q[1]) 
+                @ trans(0, 0, 0) @ Rx(q[2])
+                @ trans(0, 0, 0.06)) 	
+            
     def joint_callback(self, msg):
-        RIGHT_ARM_JOINTS = [
-            'right_shoulder_pan_joint',
-            'right_shoulder_lift_joint',
-            'right_elbow_joint',
-            'right_wrist_roll_joint',
-            'right_wrist_pitch_joint'
+        HEAD_JOINTS = [
+            'head_pan_joint',
+            'head_tilt_joint',
+            'head_roll_joint',
         ]
 
         name_to_angle = dict(zip(msg.name, msg.position))
 
-        if not all(j in name_to_angle for j in RIGHT_ARM_JOINTS):
+        if not all(j in name_to_angle for j in HEAD_JOINTS):
             return
 
-        angles = [name_to_angle[j] for j in RIGHT_ARM_JOINTS]
+        angles = [name_to_angle[j] for j in HEAD_JOINTS]
 
         T = self.compute_fk(angles)
 
@@ -85,13 +88,11 @@ class FKNode(Node):
             f'End effector → x={T[0,3]:.3f} y={T[1,3]:.3f} z={T[2,3]:.3f}'
         )
 
-
 def main():
     rclpy.init()
     node = FKNode()
     rclpy.spin(node)
     rclpy.shutdown()
-
 
 if __name__ == '__main__':
     main()
